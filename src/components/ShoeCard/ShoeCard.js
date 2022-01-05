@@ -31,19 +31,33 @@ const ShoeCard = ({
       ? 'new-release'
       : 'default'
 
+  let Component;
+  let BadgeComponent;
+
+  if (variant === 'on-sale') {
+    Component = <SalePrice>{formatPrice(salePrice)}</SalePrice>
+    BadgeComponent = <SaleBadge>Sale</SaleBadge>
+  }
+
+  if (variant === 'new-release') {
+    BadgeComponent = <NewBadge>Just Released!</NewBadge>
+  }
+
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
+          {BadgeComponent}
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price sale={variant === 'on-sale' ? 'line-through' : 'none'}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {Component}
         </Row>
       </Wrapper>
     </Link>
@@ -53,18 +67,32 @@ const ShoeCard = ({
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
+  flex: 1 1 344px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  display: flex;
+  height: 370px;
+  flex-direction: column;
+  margin-bottom: 32px;
+  padding-right: 4px;
+`;
 
 const ImageWrapper = styled.div`
   position: relative;
+  background-color: ${COLORS.gray[100]};
+  border-radius: 16px 16px 4px 4px;
+  flex: 1;
 `;
 
-const Image = styled.img``;
+const Image = styled.img`
+  width: 100%;
+  border-radius: 16px;
+`;
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
 `;
 
 const Name = styled.h3`
@@ -72,7 +100,11 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  margin-left: auto;
+  text-decoration: ${p => p.sale};
+  color: ${p => p.sale === 'line-through' ? COLORS.gray[700] : 'inherit'};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -81,6 +113,27 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+  margin-left: auto;
+`;
+
+const SaleBadge = styled.div`
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  height: 32px;
+  padding: 0 10px;
+  color: ${COLORS.white};
+  background-color: ${COLORS.primary};
+  border-radius: 2px;
+  font-size: ${(14/16)}rem;
+  line-height: 1rem;
+  font-weight: ${WEIGHTS.medium};
+  display: flex;
+  align-items: center;
+`
+
+const NewBadge = styled(SaleBadge)`
+  background-color: ${COLORS.secondary};
 `;
 
 export default ShoeCard;
